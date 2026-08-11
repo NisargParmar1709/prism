@@ -1,0 +1,14 @@
+{
+  "name": "prism",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter @prism/web dev",
+    "build:web": "pnpm --filter @prism/web build",
+    "lint:web": "pnpm --filter @prism/web lint",
+    "dev": "pnpm --filter @prism/web dev"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

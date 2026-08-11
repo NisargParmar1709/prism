@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Prism Design System — CSS Custom Properties ─── */
+:root {
+  color-scheme: light;
+
+  /* Neutral Scale */
+  --prism-white: #FFFFFF;
+  --prism-surface: #F8FAFC;
+  --prism-elevated: #F1F5F9;
+  --prism-border: #E2E8F0;
+  --prism-border-strong: #CBD5E1;
+  --prism-text: #0F172A;
+  --prism-text-secondary: #475569;
+  --prism-text-muted: #94A3B8;
+
+  /* Violet Spectrum */
+  --prism-violet-50: #F5F3FF;
+  --prism-violet-100: #EDE9FE;
+  --prism-violet-200: #DDD6FE;
+  --prism-violet-400: #A78BFA;
+  --prism-violet-500: #8B5CF6;
+  --prism-violet-600: #7C3AED;
+  --prism-violet-700: #6D28D9;
+  --prism-violet-900: #4C1D95;
+
+  /* Semantic Colors */
+  --prism-success: #10B981;
+  --prism-success-bg: #ECFDF5;
+  --prism-success-text: #065F46;
+  --prism-warning: #F59E0B;
+  --prism-warning-bg: #FFFBEB;
+  --prism-warning-text: #92400E;
+  --prism-danger: #EF4444;
+  --prism-danger-bg: #FEF2F2;
+  --prism-danger-text: #991B1B;
+  --prism-info: #3B82F6;
+  --prism-info-bg: #EFF6FF;
+
+  /* Dark Accent Cards */
+  --prism-dark-card: #1E293B;
+  --prism-dark-text: #F8FAFC;
+  --prism-dark-muted: #94A3B8;
+
+  /* Chart Palette (Monochromatic Purple) */
+  --chart-1: #7C3AED;
+  --chart-2: #A78BFA;
+  --chart-3: #C4B5FD;
+  --chart-4: #DDD6FE;
+  --chart-5: #EDE9FE;
+  --chart-6: #F5F3FF;
+}
+
+/* ─── Base Styles ─── */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-prism-white text-prism-text;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--prism-surface);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--prism-border-strong);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--prism-text-muted);
+  }
+}
+
+/* ─── Utility Classes ─── */
+@layer utilities {
+  /* Amount display — tabular-nums, monospace, right-aligned */
+  .amount {
+    font-family: var(--font-jetbrains), 'Fira Code', monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+    text-align: right;
+  }
+
+  .amount-income {
+    color: var(--prism-success);
+  }
+
+  .amount-expense {
+    color: var(--prism-danger);
+  }
+
+  .amount-neutral {
+    color: var(--prism-text);
+  }
+
+  /* Gradient text for hero/branding */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--prism-violet-500) 0%, var(--prism-violet-700) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
