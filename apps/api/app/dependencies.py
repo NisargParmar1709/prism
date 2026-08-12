@@ -66,10 +66,13 @@ async def get_current_user(
 
     # Verify JWT token using InsForge JWT Secret
     try:
+        unverified_header = jwt.get_unverified_header(token)
+        print(f"DEBUG JWT HEADER: {unverified_header}")
+        
         payload = jwt.decode(
             token,
             settings.INSFORGE_JWT_SECRET,
-            algorithms=["HS256"],
+            algorithms=["HS256", "RS256"],
             audience="authenticated"
         )
         user_id = payload.get("sub")
