@@ -72,7 +72,7 @@ async def get_current_user(
         payload = jwt.decode(
             token,
             settings.INSFORGE_JWT_SECRET,
-            algorithms=["HS256", "RS256"],
+            algorithms=["HS256", "HS384", "HS512", "RS256"],
             audience="authenticated"
         )
         user_id = payload.get("sub")
