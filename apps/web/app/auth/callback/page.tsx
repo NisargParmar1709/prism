@@ -31,7 +31,7 @@ export default function AuthCallback() {
         await new Promise(resolve => setTimeout(resolve, 500));
         
         // Use standard fetch without explicit token - api.ts or browser cookies will handle auth
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api/proxy'}/users/me`, {
           // If the token is available in a global context or via api interceptor, it would be used here.
           // Since we can't reliably extract the raw token, we assume cookies or other mechanism will work.
         });

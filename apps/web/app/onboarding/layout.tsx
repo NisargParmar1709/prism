@@ -10,8 +10,7 @@ export default async function OnboardingLayout({
 
   if (token) {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-      const backendUrl = apiUrl.startsWith('http') ? apiUrl : 'http://localhost:8000';
+      const backendUrl = process.env.FASTAPI_URL || 'http://localhost:8000';
       
       const res = await fetch(`${backendUrl}/users/me`, {
         headers: {

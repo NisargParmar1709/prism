@@ -80,7 +80,7 @@ function LoginContent() {
       try {
         const token = result.accessToken;
         if (token) {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || '/api/proxy'}/users/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
