@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { insforge } from './insforge';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+// We MUST use the Next.js proxy to securely attach the httpOnly auth cookie
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api/proxy';
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -10,12 +11,9 @@ export const api = axios.create({
   },
 });
 
+// Remove manual interceptor because the Next.js proxy (/api/proxy) handles the token extraction from the secure cookie
 api.interceptors.request.use(
-  async (config) => {
-    const token = (insforge.auth as any).tokenManager?.getAccessToken?.();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  (config) => {
     return config;
   },
   (error) => {
