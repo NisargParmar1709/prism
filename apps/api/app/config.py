@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     ENABLE_CACHING: bool = False
     
     # Custom origins (e.g. frontend URL)
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    # Allows comma-separated string from .env
+    CORS_ORIGINS: str = "http://localhost:3000"
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        if isinstance(self.CORS_ORIGINS, list):
+            return self.CORS_ORIGINS
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
 settings = Settings()
