@@ -27,9 +27,11 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+import { Suspense } from 'react';
+
 // ─── Login Page Component ────────────────────────────────────────────────────
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
@@ -76,21 +78,28 @@ export default function LoginPage() {
       // Check if onboarding is completed by fetching profile from our API
       // For now, redirect to dashboard — the dashboard/onboarding guard will handle routing
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-          headers: {
-            Authorization: `Bearer ${result.accessToken}`,
-          },
-        });
+        const token = result.accessToken;
+        if (token) {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        if (res.ok) {
-          const profile = await res.json();
-          if (!profile.onboarding_completed) {
+          if (res.ok) {
+            const profile = await res.json();
+            if (!profile.onboarding_completed) {
+              router.push('/onboarding');
+              return;
+            }
+          } else if (res.status === 404) {
+            // Profile doesn't exist yet, must do onboarding
             router.push('/onboarding');
             return;
           }
         }
       } catch {
-        // If profile fetch fails, default to dashboard
+        // If profile fetch fails completely due to network, default to dashboard
       }
 
       router.push('/dashboard');
@@ -231,5 +240,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-prism-surface flex items-center justify-center">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

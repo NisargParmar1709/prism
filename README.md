@@ -94,3 +94,12 @@ python -m uvicorn app.main:app --reload
 ## 📄 Documentation
 
 For detailed architectural decisions, design tokens, and project phases, refer to the `/docs` directory. Start with `MASTER_INDEX.md` for a complete overview.
+
+i just mean plan B 
+still buggy i think i force fully fix some of bugs over security and other requirements 
+for the production i will switch it to other service 
+Yes but still don't test it on harsh testing on it still remaining mostly bugs ans security gateways will find out for sure 
+i mean i don't want plan c current plan B
+Yes i want remaining weeks roadmap
+Yes
+that you have to find ut mostly ai don't have access of third party service like auth and redis so it always do gueess work at the end most of bugs and errors accrued due to that bcz it don't have latest docs and context and how to use it update

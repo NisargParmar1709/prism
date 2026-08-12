@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     SMTP_PASS: Optional[str] = None
     SECRET_KEY: str
     ADMIN_SECRET_KEY: str
+    ENABLE_CACHING: bool = False
     
     # Custom origins (e.g. frontend URL)
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]

@@ -63,9 +63,11 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
   );
 }
 
+import { Suspense } from 'react';
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
@@ -243,5 +245,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-prism-surface flex items-center justify-center">Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

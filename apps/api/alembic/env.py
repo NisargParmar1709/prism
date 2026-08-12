@@ -11,8 +11,7 @@ from alembic import context
 # Setup sys.path to find our app
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.models.base import Base
-from app.models.profile import Profile
+from app.models import Base
 
 # Load environment variables
 load_dotenv(".env.local")

@@ -46,14 +46,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check for InsForge session cookie
-  // The InsForge SDK sets a cookie named like 'insforge_session' or similar
-  const hasSession = request.cookies.getAll().some(
-    (cookie) =>
-      cookie.name.includes('insforge') ||
-      cookie.name.includes('session') ||
-      cookie.name.includes('access_token')
-  );
+  // Check for the first-party synced session cookie
+  const hasSession = request.cookies.has('prism-auth-token');
 
   if (!hasSession) {
     const loginUrl = new URL('/login', request.url);

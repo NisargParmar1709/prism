@@ -21,6 +21,23 @@ export interface SignUpResult {
 // ─── Auth Functions ──────────────────────────────────────────────────────────
 
 /**
+ * Helper to manually sync the session to our Next.js backend cookie.
+ * This guarantees the cookie is set before the router redirects.
+ */
+async function syncSession(token?: string | null) {
+  if (!token) return;
+  try {
+    await fetch('/api/auth/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accessToken: token }),
+    });
+  } catch (e) {
+    console.error('Failed to sync session manually', e);
+  }
+}
+
+/**
  * Register a new user with email + password.
  * redirectTo points to the login page so after link-based email verification,
  * InsForge redirects the browser there with query params indicating success/error.
@@ -34,6 +51,7 @@ export async function signUp(email: string, password: string, name?: string) {
   });
 
   if (error) throw error;
+  if (data?.accessToken) await syncSession(data.accessToken);
   return data;
 }
 
@@ -48,6 +66,7 @@ export async function signIn(email: string, password: string) {
   });
 
   if (error) throw error;
+  if (data?.accessToken) await syncSession(data.accessToken);
   return data;
 }
 
@@ -58,7 +77,7 @@ export async function signIn(email: string, password: string) {
  */
 export async function signInWithGoogle() {
   await insforge.auth.signInWithOAuth('google', {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
   });
 }
 
@@ -68,6 +87,9 @@ export async function signInWithGoogle() {
 export async function signOut() {
   const { error } = await insforge.auth.signOut();
   if (error) throw error;
+  try {
+    await fetch('/api/auth/session', { method: 'DELETE' });
+  } catch (e) {}
 }
 
 /**
