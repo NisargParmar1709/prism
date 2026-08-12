@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Providers } from '@/lib/providers';
 import './globals.css';
 
 const inter = Inter({
@@ -29,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} light`}>
       <body className="min-h-screen bg-prism-white font-sans antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

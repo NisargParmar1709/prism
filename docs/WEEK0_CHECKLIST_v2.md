@@ -330,7 +330,7 @@ Read /FRONTEND_OPTIMIZATION_GUIDE.md Section 1 (Vercel Configuration).
 
 ## TASK
 1. Create `vercel.json` in apps/web with:
-   - regions: ["sin1"]
+   - regions: ["bom1"]
    - Cache headers for static assets
    - Headers for API routes
 
@@ -358,7 +358,7 @@ Read /FRONTEND_OPTIMIZATION_GUIDE.md Section 1 (Vercel Configuration).
 1. Deploy succeeds on Vercel
 2. Open deployed URL on mobile — verify light mode, cards, gradient text
 3. Check Network tab — static assets served from CDN
-4. Verify X-Vercel-Id header shows sin1 region
+4. Verify X-Vercel-Id header shows bom1 region
 ```
 
 **Human Check:** Open on phone. Screenshot and verify design matches wireframe aesthetic.
