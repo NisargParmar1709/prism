@@ -1,5 +1,5 @@
 {
-  "regions": ["bom1"],
+  "regions": ["sfo1"],
   "headers": [
     {
       "source": "/(.*)\\.(js|css|webp|png|jpg|jpeg|svg|woff2|woff)",
