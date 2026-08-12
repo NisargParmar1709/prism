@@ -7,6 +7,13 @@
 
 ---
 
+## Code Push Protocol
+After completing a significant feature (or at the end of a logical group of tasks), the AI **MUST** ask the user for explicit permission to commit and push the code to the server/repository. 
+- Ask before pushing.
+- Do not push automatically without user approval.
+
+---
+
 ## Pre-Reading (Do This First)
 Before starting any task, read these files in order:
 1. `PROJECT_CONTEXT_v2.md`

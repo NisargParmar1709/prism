@@ -36,7 +36,13 @@ async def get_current_user(credentials: Annotated[HTTPAuthorizationCredentials, 
             algorithms=["HS256"],
             audience="authenticated"
         )
-        return payload
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"code": "AUTHENTICATION_ERROR", "message": "Token missing user identifier"}
+            )
+        return user_id
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
