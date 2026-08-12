@@ -10,9 +10,12 @@ export const api = axios.create({
   },
 });
 
-// Remove the old token interceptor since the Next.js proxy handles auth extraction
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    const { data: { session } } = await insforge.auth.getSession();
+    if (session?.access_token) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
+    }
     return config;
   },
   (error) => {
