@@ -22,14 +22,7 @@ class Settings(BaseSettings):
     ADMIN_SECRET_KEY: str
     ENABLE_CACHING: bool = False
     
-    # Custom origins (e.g. frontend URL)
-    # Allows comma-separated string from .env
-    CORS_ORIGINS: str = "http://localhost:3000"
-
-    @property
-    def cors_origins_list(self) -> list[str]:
-        if isinstance(self.CORS_ORIGINS, list):
-            return self.CORS_ORIGINS
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+    # Allow all origins to simplify frontend deployments (auth is still protected by JWT)
+    CORS_ORIGINS: list[str] = ["*"]
 
 settings = Settings()
