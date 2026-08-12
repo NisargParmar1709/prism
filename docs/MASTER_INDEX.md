@@ -6,6 +6,25 @@
 
 ---
 
+## 📍 CURRENT PROGRESS (Updated: 2026-08-12)
+
+**Current Phase:** Week 0
+**Completed So Far:**
+- ✅ Monorepo structure initialized and dependencies (`pnpm`, `pip`) working
+- ✅ Next.js and FastAPI dev servers running locally
+- ✅ Design Tokens and Fonts (`Inter`, `JetBrains Mono`) set up
+- ✅ Next.js frontend deployed to Vercel
+- ✅ FastAPI backend containerized and deployed to InsForge Compute
+- ✅ All 13 base UI components built, styled, and animated
+- ✅ `/test-components` page created and verified visually
+
+**Remaining to pass the Week 0 Exit Gate:**
+1. Set up UptimeRobot to ping the `/health` endpoint every 5 minutes.
+2. Update `PROJECT_CONTEXT_v2.md` with actual project refs (e.g. `kq8artpq`).
+3. Verify `.env.example` is checked into git and `.env.local` is ignored.
+
+---
+
 ## 📋 Document Reading Order (Never Skip)
 
 Before giving ANY task to AntiGravity, prepend these documents in this exact order:
