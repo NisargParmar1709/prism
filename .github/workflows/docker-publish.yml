@@ -10,7 +10,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-api
 
 jobs:
   build-and-push-image:
@@ -22,6 +21,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set lower case image name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}-api" >> $GITHUB_ENV
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
