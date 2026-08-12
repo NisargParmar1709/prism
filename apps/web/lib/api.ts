@@ -12,9 +12,9 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const { data: { session } } = await insforge.auth.getSession();
-    if (session?.access_token) {
-      config.headers.Authorization = `Bearer ${session.access_token}`;
+    const token = (insforge.auth as any).tokenManager?.getAccessToken?.();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
