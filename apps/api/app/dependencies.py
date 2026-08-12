@@ -64,33 +64,36 @@ async def get_current_user(
             print(f"Redis Cache Error: {e}")
             # Ignore cache errors and fall back to remote verification
 
-    # Verify remotely with InsForge
+    # Verify JWT token using InsForge JWT Secret
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"{settings.INSFORGE_URL}/api/auth/sessions/current",
-                headers={"Authorization": f"Bearer {token}"}
+        payload = jwt.decode(
+            token,
+            settings.INSFORGE_JWT_SECRET,
+            algorithms=["HS256"],
+            audience="authenticated"
+        )
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"code": "AUTHENTICATION_ERROR", "message": "Token missing user identifier"}
             )
-            if response.status_code == 200:
-                from uuid import UUID
-                user_id = UUID(response.json()["user"]["id"])
-                # Cache the successful verification for 5 minutes
-                if settings.ENABLE_CACHING and redis_client is not None:
-                    try:
-                        await redis_client.set(cache_key, str(user_id), ex=300)
-                    except redis_exceptions.RedisError as e:
-                        print(f"Redis Cache Write Error: {e}")
-                return user_id
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail={"code": "AUTHENTICATION_ERROR", "message": "Invalid or expired token"}
-                )
-    except httpx.RequestError as e:
-        print(f"Auth Service Unavailable: {e}")
+        from uuid import UUID
+        user_uuid = UUID(user_id)
+        
+        # Optionally cache it if caching is enabled
+        if settings.ENABLE_CACHING and redis_client is not None:
+            try:
+                await redis_client.set(cache_key, str(user_uuid), ex=300)
+            except redis_exceptions.RedisError as e:
+                print(f"Redis Cache Write Error: {e}")
+                
+        return user_uuid
+    except JWTError as e:
+        print(f"JWT Decode Error: {e}")
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail={"code": "AUTH_UNAVAILABLE", "message": "Authentication service unavailable"}
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "AUTHENTICATION_ERROR", "message": "Invalid or expired token"}
         )
 
 # 4. Admin Authentication
