@@ -1,6 +1,6 @@
 import uuid
 from decimal import Decimal
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -11,7 +11,7 @@ from ..schemas.savings_goal import SavingsGoalCreate, SavingsGoalUpdate
 
 def calculate_status(goal: SavingsGoal) -> str:
     if goal.deadline:
-        today = date.today()
+        today = datetime.now(timezone.utc).date()
         days_remaining = (goal.deadline - today).days
         if days_remaining <= 0:
             return "behind" if goal.current_amount < goal.target_amount else "on_track"

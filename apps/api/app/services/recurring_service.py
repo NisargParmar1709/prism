@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -53,7 +53,7 @@ async def create_rule(db: AsyncSession, user_id: UUID, rule_in: RecurringRuleCre
     if not account:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
 
-    today = datetime.now().date()
+    today = datetime.now(timezone.utc).date()
     # Initial next_run is either start_date (if in future/today) or calculated
     if today < rule_in.start_date:
         next_run = rule_in.start_date
@@ -92,7 +92,7 @@ async def update_rule(db: AsyncSession, user_id: UUID, rule_id: UUID, rule_in: R
         setattr(rule, field, value)
 
     if recalculate:
-        today = datetime.now().date()
+        today = datetime.now(timezone.utc).date()
         rule.next_run = calculate_next_run(rule.start_date, rule.frequency, today - relativedelta(days=1))
         # If we subtract 1 day from today, calculate_next_run will return >= today.
 
@@ -122,7 +122,7 @@ async def get_upcoming(db: AsyncSession, user_id: UUID):
     return result.scalars().all()
 
 async def generate_due_transactions(db: AsyncSession):
-    today = datetime.now().date()
+    today = datetime.now(timezone.utc).date()
     
     # Fetch all active rules due today or earlier
     result = await db.execute(

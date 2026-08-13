@@ -23,12 +23,7 @@ class TransactionCreate(BaseModel):
             raise ValueError('Amount exceeds maximum allowed')
         return v
 
-    @field_validator('date')
-    @classmethod
-    def date_cannot_be_in_future(cls, v):
-        if v > dt.date.today():
-            raise ValueError('Transaction date cannot be in the future')
-        return v
+
 
 class TransactionUpdate(BaseModel):
     category_id: Optional[UUID] = None
@@ -46,12 +41,7 @@ class TransactionUpdate(BaseModel):
             raise ValueError('Amount exceeds maximum allowed')
         return v
 
-    @field_validator('date')
-    @classmethod
-    def date_cannot_be_in_future(cls, v):
-        if v is not None and v > dt.date.today():
-            raise ValueError('Transaction date cannot be in the future')
-        return v
+
 
 class TransactionResponse(BaseModel):
     id: UUID
