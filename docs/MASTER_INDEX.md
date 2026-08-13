@@ -6,10 +6,11 @@
 
 ---
 
-## 📍 CURRENT PROGRESS (Updated: 2026-08-12)
+## 📍 CURRENT PROGRESS (Updated: 2026-08-13)
 
-**Current Phase:** Week 0
-**Completed So Far:**
+**Current Phase:** Week 1 / Week 2 Prep
+
+**Week 0 Accomplishments:**
 - ✅ Monorepo structure initialized and dependencies (`pnpm`, `pip`) working
 - ✅ Next.js and FastAPI dev servers running locally
 - ✅ Design Tokens and Fonts (`Inter`, `JetBrains Mono`) set up
@@ -22,6 +23,16 @@
 1. Set up UptimeRobot to ping the `/health` endpoint every 5 minutes.
 2. Update `PROJECT_CONTEXT_v2.md` with actual project refs (e.g. `kq8artpq`).
 3. Verify `.env.example` is checked into git and `.env.local` is ignored.
+
+**Week 1 Accomplishments:**
+- ✅ InsForge SDK Authentication integrated and verified across mobile and desktop
+- ✅ Next.js Proxy configured for secure `httpOnly` JWT cookie extraction
+- ✅ CORS issues and JWT format mismatch (RS256) resolved via proxy routing
+- ✅ Clean codebase snapshot created
+
+**Remaining to pass the Week 1 Exit Gate:**
+1. Finalize user profile and onboarding flows.
+2. Prepare for Week 2 (Transactions & Categories).
 
 ---
 
@@ -78,6 +89,9 @@ Before giving ANY task to AntiGravity, prepend these documents in this exact ord
 | 6 | API_CONTRACT_v2.md | [Download](sandbox:///mnt/agents/output/prism_docs_v2/API_CONTRACT_v2.md) | API contract |
 | 7 | WEEK0_CHECKLIST_v2.md | [Download](sandbox:///mnt/agents/output/prism_docs_v2/WEEK0_CHECKLIST_v2.md) | Week 0 execution |
 | 8 | WEEK1_CHECKLIST_v2.md | [Download](sandbox:///mnt/agents/output/prism_docs_v2/WEEK1_CHECKLIST_v2.md) | Week 1 execution |
+| 9 | WEEK2_CHECKLIST_v2.md | [Download](sandbox:///mnt/agents/output/prism_docs_v2/WEEK2_CHECKLIST_v2.md) | Week 2 execution |
+| 10 | AUTH_GUIDE.md | [Download](sandbox:///mnt/agents/output/prism_docs_v2/prism_daywise_md/AUTH_GUIDE.md) | Authentication reference |
+| 11 | ENV_REFERENCE.md | [Download](sandbox:///mnt/agents/output/prism_docs_v2/ENV_REFERENCE.md) | Environment configuration |
 
 ---
 
@@ -181,6 +195,10 @@ prism_docs_v2/
 ├── API_CONTRACT_v2.md             ← Backend contract
 ├── WEEK0_CHECKLIST_v2.md          ← Week 0 tasks
 ├── WEEK1_CHECKLIST_v2.md          ← Week 1 tasks
+├── WEEK2_CHECKLIST_v2.md          ← Week 2 tasks
+├── ENV_REFERENCE.md               ← Environment configuration
+├── prism_daywise_md/
+│   └── AUTH_GUIDE.md              ← Authentication reference
 └── MASTER_INDEX.md                ← This file
 ```
 

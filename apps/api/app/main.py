@@ -8,10 +8,36 @@ import traceback
 from .config import settings
 from .middleware.logging import StructuredLoggingMiddleware
 from .routers import api_router
+import asyncio
+from contextlib import asynccontextmanager
+
+async def local_cron_job():
+    import httpx
+    # Wait a bit before starting the first loop to ensure server is fully up
+    await asyncio.sleep(5)
+    
+    expected_secret = "super-secret-cron-key" # Default from recurring_rules
+    while True:
+        try:
+            async with httpx.AsyncClient() as client:
+                print("Running local cron simulation for recurring transactions...")
+                await client.post(f"http://127.0.0.1:8000/recurring-rules/internal/generate?secret={expected_secret}")
+        except Exception as e:
+            print(f"Local cron error: {e}")
+            
+        await asyncio.sleep(600) # Run every 10 minutes for local dev
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Start the local cron loop only if we're running locally
+    cron_task = asyncio.create_task(local_cron_job())
+    yield
+    cron_task.cancel()
 
 app = FastAPI(
     title="Prism API",
-    version="1.0"
+    version="1.0",
+    lifespan=lifespan
 )
 
 # 1. Middlewares

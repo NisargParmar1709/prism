@@ -2,6 +2,7 @@ import uuid
 from sqlalchemy import Column, String, Boolean, DateTime, Numeric, Enum, Index
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from .base import Base
 import enum
 
@@ -33,3 +34,5 @@ class Account(Base):
     __table_args__ = (
         Index("ix_accounts_user_id_is_archived", "user_id", "is_archived"),
     )
+
+    transactions = relationship("Transaction", back_populates="account")

@@ -9,6 +9,8 @@ export default async function DashboardLayout({
 }) {
   const token = cookies().get('prism-auth-token')?.value;
 
+  let shouldRedirectToOnboarding = false;
+
   if (token) {
     try {
       const backendUrl = process.env.FASTAPI_URL || 'http://localhost:8000';
@@ -23,15 +25,21 @@ export default async function DashboardLayout({
       if (res.ok) {
         const profile = await res.json();
         if (!profile.onboarding_completed) {
-          redirect('/onboarding');
+          shouldRedirectToOnboarding = true;
         }
       } else if (res.status === 404) {
         // Profile not created yet -> needs onboarding
-        redirect('/onboarding');
+        shouldRedirectToOnboarding = true;
       }
     } catch (e) {
       console.error('Failed to verify onboarding status:', e);
     }
+  } else {
+    redirect('/login');
+  }
+
+  if (shouldRedirectToOnboarding) {
+    redirect('/onboarding');
   }
 
   return (

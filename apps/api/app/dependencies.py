@@ -29,14 +29,16 @@ async def get_redis() -> AsyncGenerator[Optional[redis.Redis], None]:
     if "upstash.io" in redis_url and redis_url.startswith("redis://"):
         redis_url = redis_url.replace("redis://", "rediss://")
     
+    client = None
     try:
         client = redis.from_url(redis_url, decode_responses=True)
-        yield client
     except Exception as e:
         print(f"Redis initialization error: {e}")
-        yield None
+        
+    try:
+        yield client
     finally:
-        if 'client' in locals() and client is not None:
+        if client is not None:
             await client.aclose()
 
 # 3. User Authentication

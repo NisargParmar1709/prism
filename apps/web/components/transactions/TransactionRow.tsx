@@ -29,7 +29,7 @@ export function TransactionRow({
       className={cn(
         'group grid h-16 cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-4 border-b border-prism-border py-3 pl-3 pr-4 transition-colors hover:bg-prism-surface',
         isSelected && 'border-l-4 border-l-prism-violet-500 pl-[9px]',
-        !hideAccount && 'sm:grid-cols-[auto_1fr_auto_auto]' // Account column added for larger screens if not hidden
+        'sm:grid-cols-[auto_1fr_auto_auto]' // Account/Date column added for larger screens
       )}
     >
       {/* Icon */}

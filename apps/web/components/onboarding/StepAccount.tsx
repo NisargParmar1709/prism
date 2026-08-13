@@ -119,13 +119,6 @@ export default function StepAccount({ onNext, onSkip, onBack }: { onNext: () => 
         >
           Add Account
         </button>
-        <button
-          type="button"
-          onClick={onSkip}
-          className="w-full text-prism-violet-600 font-medium py-3 hover:text-prism-violet-700 transition-colors"
-        >
-          Skip
-        </button>
       </div>
     </div>
   );

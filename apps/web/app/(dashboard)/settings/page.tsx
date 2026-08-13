@@ -2,7 +2,8 @@ import React from 'react';
 import { ProfileSection } from '../../../components/settings/ProfileSection';
 import { NotificationsSection } from '../../../components/settings/NotificationsSection';
 import { DataPrivacySection } from '../../../components/settings/DataPrivacySection';
-import { Settings as SettingsIcon, Bell, Shield } from 'lucide-react';
+import { CategoriesSection } from '../../../components/settings/CategoriesSection';
+import { Settings as SettingsIcon, Bell, Shield, Tags } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
@@ -24,6 +25,10 @@ export default function SettingsPage() {
             <Shield className="w-4 h-4" />
             Data & Privacy
           </a>
+          <a href="#categories" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+            <Tags className="w-4 h-4" />
+            Categories
+          </a>
         </div>
       </div>
 
@@ -39,6 +44,10 @@ export default function SettingsPage() {
         
         <section id="privacy" className="scroll-mt-8">
           <DataPrivacySection />
+        </section>
+        
+        <section id="categories" className="scroll-mt-8">
+          <CategoriesSection />
         </section>
       </div>
     </div>

@@ -7,14 +7,32 @@ from app.models.account import Account
 from app.models.transaction import Transaction
 from app.schemas.account import AccountCreate, AccountUpdate
 
-async def compute_balance(db: AsyncSession, account_id: UUID) -> Decimal:
+async def compute_balance(db: AsyncSession, account_id: UUID, user_id: UUID) -> Decimal:
+    from sqlalchemy import case
     result = await db.execute(
-        select(func.coalesce(func.sum(Transaction.amount), Decimal('0')))
-        .where(Transaction.account_id == account_id)
-        .where(Transaction.deleted_at.is_(None))
+        select(
+            func.coalesce(
+                func.sum(
+                    case(
+                        (Transaction.type == 'income', Transaction.amount),
+                        (Transaction.type == 'expense', -Transaction.amount),
+                        else_=Decimal('0')
+                    )
+                ), Decimal('0')
+            )
+        )
+        .where(
+            Transaction.account_id == account_id,
+            Transaction.user_id == user_id,
+            Transaction.deleted_at.is_(None),
+            Transaction.status == 'completed'
+        )
     )
     transactions_sum = result.scalar()
-    account = await db.get(Account, account_id)
+    account = await db.execute(
+        select(Account).where(Account.id == account_id, Account.user_id == user_id)
+    )
+    account = account.scalar_one_or_none()
     if not account:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
     return account.opening_balance + transactions_sum
@@ -41,7 +59,7 @@ async def get_accounts(db: AsyncSession, user_id: UUID, include_archived: bool =
     accounts = result.scalars().all()
     
     for account in accounts:
-        account.current_balance = await compute_balance(db, account.id)
+        account.current_balance = await compute_balance(db, account.id, user_id)
         
     return accounts
 
@@ -50,7 +68,7 @@ async def get_account(db: AsyncSession, user_id: UUID, account_id: UUID):
     if not account or account.user_id != user_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
         
-    account.current_balance = await compute_balance(db, account.id)
+    account.current_balance = await compute_balance(db, account.id, user_id)
     # Note: transactions would ideally be attached here or queried separately by the client
     return account
 
@@ -66,7 +84,7 @@ async def update_account(db: AsyncSession, user_id: UUID, account_id: UUID, acco
     await db.commit()
     await db.refresh(account)
     
-    account.current_balance = await compute_balance(db, account.id)
+    account.current_balance = await compute_balance(db, account.id, user_id)
     return account
 
 async def archive_account(db: AsyncSession, user_id: UUID, account_id: UUID):

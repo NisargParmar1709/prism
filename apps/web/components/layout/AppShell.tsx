@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
-import { QuickAddPlaceholder } from './QuickAddPlaceholder';
+import { QuickAddModal } from '@/components/transactions/QuickAddModal';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <BottomNav onQuickAddClick={() => setIsQuickAddOpen(true)} />
 
       {/* Modals */}
-      <QuickAddPlaceholder 
+      <QuickAddModal 
         isOpen={isQuickAddOpen} 
         onClose={() => setIsQuickAddOpen(false)} 
       />
