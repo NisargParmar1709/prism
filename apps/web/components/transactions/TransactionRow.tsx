@@ -3,6 +3,7 @@ import { Transaction } from '@/hooks/use-transactions';
 import { cn, formatCurrency } from '@/lib/utils';
 import { useBalanceVisibility } from '@/components/providers/BalanceProvider';
 import { format, parseISO } from 'date-fns';
+import { parseLocalDate } from '@/lib/date-utils';
 
 export interface TransactionRowProps {
   transaction: Transaction;
@@ -45,7 +46,7 @@ export function TransactionRow({
         <span className="truncate text-small text-prism-text-muted">
           {transaction.category_name || 'Uncategorized'}
           {!hideAccount && <span className="sm:hidden"> · {transaction.account_name}</span>}
-          <span className="sm:hidden"> · {format(parseISO(transaction.date), 'MMM d, h:mm a')}</span>
+          <span className="sm:hidden"> · {format(parseLocalDate(transaction.date), 'MMM d, yyyy')}</span>
         </span>
       </div>
 
@@ -54,7 +55,10 @@ export function TransactionRow({
         <div className="hidden flex-col truncate sm:flex">
           <span className="truncate text-body text-prism-text">{transaction.account_name}</span>
           <span className="truncate text-small text-prism-text-muted">
-            {format(parseISO(transaction.date), 'MMM d, h:mm a')}
+            {format(parseLocalDate(transaction.date), 'MMM d, yyyy')}
+          </span>
+          <span className="truncate text-xs text-prism-text-muted">
+            {format(parseISO(transaction.created_at), 'h:mm a')}
           </span>
         </div>
       )}
@@ -63,10 +67,10 @@ export function TransactionRow({
       {hideAccount && (
         <div className="hidden flex-col truncate text-right sm:flex">
           <span className="truncate text-small text-prism-text-muted">
-            {format(parseISO(transaction.date), 'MMM d, yyyy')}
+            {format(parseLocalDate(transaction.date), 'MMM d, yyyy')}
           </span>
           <span className="truncate text-xs text-prism-text-muted">
-            {format(parseISO(transaction.date), 'h:mm a')}
+            {format(parseISO(transaction.created_at), 'h:mm a')}
           </span>
         </div>
       )}
