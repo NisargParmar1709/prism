@@ -30,9 +30,16 @@
 - ✅ CORS issues and JWT format mismatch (RS256) resolved via proxy routing
 - ✅ Clean codebase snapshot created
 
+**Week 1/2 Bug Fixes & Improvements (Added 2026-08-14):**
+- ✅ Pydantic `decimal_places=2` restriction removed to avoid strict JS float payload validation errors.
+- ✅ Frontend sends `amount` as strings to Pydantic (which parses to Decimal safely) instead of JavaScript `parseFloat()` floats.
+- ✅ Timezone bugs fixed globally: `parseISO` replaced with `parseLocalDate` to prevent UTC shifting when rendering simple calendar dates.
+- ✅ Removed arbitrary "cannot be in the future" server-time based validations from backend Pydantic models.
+- ✅ Global backend jobs (crons, savings goals) properly use `datetime.now(timezone.utc).date()`.
+
 **Remaining to pass the Week 1 Exit Gate:**
 1. Finalize user profile and onboarding flows.
-2. Prepare for Week 2 (Transactions & Categories).
+2. Prepare for Week 2 (Transactions & Categories) and Week 3 (Budgets).
 
 ---
 
@@ -158,6 +165,11 @@ Before accepting ANY AI output, verify it doesn't do these:
 - [ ] Did NOT build Tremor default UI (custom Recharts wrappers)
 - [ ] Did NOT limit savings goals to 1 (multiple per user)
 - [ ] Did NOT skip RLS policies on user tables
+- [ ] Did NOT use `parseISO` on simple calendar dates in the frontend (use `parseLocalDate` from `date-utils.ts` to avoid UTC shifting).
+- [ ] Did NOT use `decimal_places=2` in Pydantic schema for API routes (causes 422s with JS float precision).
+- [ ] Did NOT send `amount` as a `parseFloat()` float to backend API (send as raw string for Decimal mapping).
+- [ ] Did NOT use `date.today()` or `datetime.now().date()` in the backend for global logic (use `datetime.now(timezone.utc).date()`).
+- [ ] Did NOT block future dates via backend validation (user local "today" can be up to 14 hours ahead of server).
 
 ---
 
