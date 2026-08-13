@@ -113,7 +113,7 @@ export function TransactionFilters({ isOpen, onClose, filters, onFilterChange }:
             Apply Filters
           </PrismButton>
           <PrismButton
-            variant="ghost"
+            variant="text"
             className="w-full mt-2"
             onClick={() => {
               onFilterChange({});
