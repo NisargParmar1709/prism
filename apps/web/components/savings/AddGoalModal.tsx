@@ -6,6 +6,7 @@ import { PrismButton } from "@/components/ui/PrismButton";
 import { PrismInput } from "@/components/ui/PrismInput";
 import { AmountInput } from "@/components/ui/AmountInput";
 import { useSavingsGoals } from "@/hooks/use-savings-goals";
+import { getLocalToday } from "@/lib/date-utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AddGoalModalProps {
@@ -115,6 +116,7 @@ export function AddGoalModal({ isOpen, onClose }: AddGoalModalProps) {
               <PrismInput
                 label="Deadline (Optional)"
                 type="date"
+                min={getLocalToday()}
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
               />

@@ -20,6 +20,7 @@ export const AmountInput = React.forwardRef<HTMLInputElement, AmountInputProps>(
       const val = e.target.value.replace(/[^0-9.]/g, '');
       const parts = val.split('.');
       if (parts.length > 2) return; // Prevent multiple decimal points
+      if (parts.length === 2 && parts[1].length > 2) return; // Prevent more than 2 decimal places
       if (onChange) {
         onChange(val);
       }

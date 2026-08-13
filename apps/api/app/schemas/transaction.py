@@ -9,7 +9,7 @@ class TransactionCreate(BaseModel):
     account_id: UUID
     category_id: UUID
     type: str = Field(..., pattern="^(income|expense)$")
-    amount: Decimal = Field(..., gt=0, decimal_places=2, max_digits=12)
+    amount: Decimal = Field(..., gt=0, max_digits=12)
     date: dt.date
     note: Optional[str] = Field(None, max_length=500)
     tags: List[str] = Field(default_factory=list)
@@ -32,7 +32,7 @@ class TransactionCreate(BaseModel):
 
 class TransactionUpdate(BaseModel):
     category_id: Optional[UUID] = None
-    amount: Optional[Decimal] = Field(None, gt=0, decimal_places=2, max_digits=12)
+    amount: Optional[Decimal] = Field(None, gt=0, max_digits=12)
     date: Optional[dt.date] = None
     note: Optional[str] = Field(None, max_length=500)
     tags: Optional[List[str]] = None

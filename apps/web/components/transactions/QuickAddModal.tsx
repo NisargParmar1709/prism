@@ -13,6 +13,7 @@ import { useCategories } from '@/hooks/use-categories';
 import { useAccounts } from '@/hooks/use-accounts';
 import { useCreateTransaction, useCreateRecurringRule } from '@/hooks/use-transactions';
 import { CategoryModal } from '@/components/categories/CategoryModal';
+import { getLocalToday } from '@/lib/date-utils';
 import toast from 'react-hot-toast';
 
 interface QuickAddModalProps {
@@ -43,7 +44,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
       amount: '',
       category_id: '',
       account_id: '',
-      date: format(new Date(), 'yyyy-MM-dd'),
+      date: getLocalToday(),
       note: '',
       repeat: 'none',
     },
@@ -259,6 +260,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
                 <label className="block text-small text-prism-text mb-1">Date</label>
                 <input 
                   type="date"
+                  max={getLocalToday()}
                   className="w-full h-10 px-3 rounded-input border border-prism-border bg-prism-white text-body text-prism-text focus:border-prism-violet-500 focus:ring-1 focus:ring-prism-violet-500 outline-none"
                   {...form.register('date')}
                 />

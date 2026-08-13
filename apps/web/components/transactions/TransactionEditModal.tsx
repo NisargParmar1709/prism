@@ -6,12 +6,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
+import toast from 'react-hot-toast';
 
 import { PrismButton } from '@/components/ui/PrismButton';
 import { AmountInput } from '@/components/ui/AmountInput';
 import { useCategories } from '@/hooks/use-categories';
 import { useUpdateTransaction, Transaction } from '@/hooks/use-transactions';
 import { CategoryModal } from '@/components/categories/CategoryModal';
+import { getLocalToday } from '@/lib/date-utils';
 
 interface TransactionEditModalProps {
   isOpen: boolean;
@@ -72,13 +74,24 @@ export function TransactionEditModal({ isOpen, onClose, transaction }: Transacti
         id: transaction.id,
         data: {
           ...values,
-          amount: parseFloat(values.amount),
+          amount: values.amount,
         },
       });
       onClose();
     } catch (error: any) {
-      if (error?.response?.data?.detail) {
-        form.setError('amount', { message: error.response.data.detail });
+      const errData = error?.response?.data?.error;
+      if (errData?.field_errors) {
+        // Map backend validation errors to form fields
+        Object.entries(errData.field_errors).forEach(([field, messages]) => {
+          const fieldName = field.replace('body.', '') as keyof FormValues;
+          form.setError(fieldName, { message: (messages as string[])[0] });
+        });
+      } else if (error?.response?.data?.error?.message) {
+        toast.error(error.response.data.error.message);
+      } else if (error?.response?.data?.detail) {
+        toast.error(error.response.data.detail);
+      } else {
+        toast.error('Failed to update transaction');
       }
     }
   };
@@ -175,6 +188,7 @@ export function TransactionEditModal({ isOpen, onClose, transaction }: Transacti
               <label className="block text-small text-prism-text mb-1">Date</label>
               <input 
                 type="date"
+                max={getLocalToday()}
                 className="w-full h-10 px-3 rounded-input border border-prism-border bg-prism-white text-body text-prism-text focus:border-prism-violet-500 focus:ring-1 focus:ring-prism-violet-500 outline-none"
                 {...form.register('date')}
               />
