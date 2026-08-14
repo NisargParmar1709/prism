@@ -41,7 +41,7 @@
 | Forms | React Hook Form + Zod | Performance + validation |
 | Icons | Lucide React | Consistent, lightweight |
 | Animations | Framer Motion | Onboarding transitions, micro-interactions |
-| PWA | next-pwa | Offline transaction queue |
+| PWA | [CANCELLED] | Offline sync removed |
 | Currency | currency.js | Exact decimal math for INR |
 
 ### Backend
@@ -59,9 +59,9 @@
 | Concern | Choice | Why |
 |---------|--------|-----|
 | User DB | InsForge PostgreSQL (Project A) | Source of truth |
-| Admin DB | InsForge PostgreSQL (Project B) | Aggregates only |
+| Admin DB | [SEPARATE APP IN MONOREPO: apps/admin-web & apps/admin-api] | Aggregates only |
 | Cache | Upstash Redis | Rate limiting, session cache, dashboard summaries |
-| AI | InsForge Model Gateway | Built-in, OpenAI-compatible |
+| AI | External APIs (Gemini/OpenRouter) | Direct API calls |
 | Email | Any SMTP (placeholder) | Upgrade to Resend later |
 | Analytics | PostHog (free tier) | 1M events/month |
 | Error Tracking | Sentry (free tier) | Admin dashboard error log |
@@ -86,7 +86,7 @@
 | Dashboard (stats, charts, recent txns, accounts, upcoming, savings goals) | 3 | ⭐⭐⭐⭐ |
 | Settings (profile, notifications, data export, delete account) | 4 | ⭐⭐⭐⭐ |
 | CSV Export | 4 | ⭐⭐ |
-| PWA / Offline Support | 4 | ⭐⭐⭐ |
+| PWA / Offline Support | [CANCELLED] | - |
 
 ### v1.1 (Weeks 5–6) — Post-MVP Polish
 | Feature | Week | Complexity |
@@ -139,7 +139,7 @@
 | `group_expenses` | Shared expenses |
 | `group_expense_splits` | Per-member split |
 
-### Tables — Admin Plane (DB2)
+### Tables — Admin Plane (DB2) [SEPARATE APP IN MONOREPO]
 | Table | Purpose |
 |-------|---------|
 | `admin_metrics` | Aggregated counts |
@@ -183,10 +183,10 @@
 - [ ] AI monthly summary
 - [ ] Anomaly detection
 - [ ] Notifications (email + in-app)
-- [ ] Admin dashboard
-- [ ] Admin sync job
+- [ ] Admin dashboard [SEPARATE APP IN MONOREPO]
+- [ ] Admin sync job [SEPARATE APP IN MONOREPO]
 - [ ] CSV import/export
-- [ ] PWA / offline support
+- [ ] PWA / offline support [CANCELLED]
 - [ ] 2FA
 - [ ] Groups / Split Bills
 
@@ -204,7 +204,7 @@
 | 7 | Agent dumps raw data to LLM | BLOCKED | SQL-first, result-only to LLM |
 | 8 | Agent implements in-memory rate limit | BLOCKED | Upstash Redis only |
 | 9 | Agent allows CORS wildcard prod | BLOCKED | Explicit origins |
-| 10 | Agent merges admin/user auth | BLOCKED | Separate JWT secrets/instances |
+| 10 | Agent builds admin routes | BLOCKED | Admin is completely separate application in this monorepo |
 | 11 | Agent uses dark mode by default | BLOCKED | Light mode per wireframe |
 | 12 | Agent uses rainbow charts | BLOCKED | Monochromatic purple only |
 | 13 | Agent builds Tremor default UI | BLOCKED | Custom Recharts wrappers |
@@ -218,7 +218,7 @@
 | User → Vercel (static) | ~20-50ms (Mumbai CDN) | Automatic |
 | User → Vercel Function | ~50-100ms (sin1) | Pin region, ISR |
 | Vercel → InsForge (API) | ~200-300ms (US/EU) | Cache-aside Redis, optimistic UI |
-| InsForge → Model Gateway | ~100-200ms | Stream token-by-token |
+| InsForge → External AI API | ~300-500ms | Stream token-by-token |
 
 ---
 

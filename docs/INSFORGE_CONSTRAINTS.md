@@ -32,16 +32,9 @@
 
 **AI Rule:** Enable RLS on ALL user-facing tables. Policies must check `auth.uid()`.
 
-### 3. Model Gateway (AI)
-| Feature | Status | Notes |
-|---------|--------|-------|
-| OpenAI-compatible API | ✅ | `/v1/chat/completions` format |
-| Gemini Flash | ✅ | Free tier included |
-| Anthropic Claude | ✅ | May have usage limits |
-| Streaming responses | ✅ | SSE format |
-| Rate limits | ⚠️ Check at build | Higher than OpenRouter, but not unlimited |
-
-**AI Rule:** Do NOT use OpenRouter. Use InsForge Model Gateway endpoint with `base_url` pointing to your project.
+### 3. Model Gateway (AI) [CANCELLED]
+> [!CAUTION]
+> **[OVERRIDE]** We are NOT using the InsForge Model Gateway. We will communicate directly with external APIs (e.g. Gemini API, OpenRouter). Expect `GEMINI_API_KEY` or `OPENROUTER_API_KEY`.
 
 ### 4. Edge Functions
 | Feature | Status | Notes |
@@ -94,19 +87,10 @@ Do NOT put business logic in Edge Functions. Keep financial calculations in Fast
 
 ---
 
-## Two-Instance Strategy (User + Admin)
+## Two-Instance Strategy (User + Admin) [CANCELLED]
 
-Your architecture doc assumed two separate InsForge accounts. As of v2.0, InsForge allows **2 dedicated instances in ONE account**.
-
-**Decision:** Use ONE account with TWO instances for simplicity, OR two accounts for maximum isolation.
-
-| Approach | Pros | Cons |
-|----------|------|------|
-| One account, two instances | Single billing, single MCP connection, easier mgmt | Shared account-level limits |
-| Two accounts | Maximum isolation, independent pause cycles | Double operational overhead |
-
-**Current Decision:** One account, two instances (Project A = user, Project B = admin). 
-**Revisit if:** You hit account-level limits or need true organizational separation.
+> [!CAUTION]
+> **[OVERRIDE]** The Admin Panel is now a completely separate application in this monorepo (`apps/admin-api` and `apps/admin-web`). Do NOT build admin databases or admin APIs in the main `apps/api` app.
 
 ---
 
@@ -127,12 +111,9 @@ Your AntiGravity IDE connects to InsForge via MCP. This means:
 # User Instance (Project A)
 DATABASE_URL=postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgres
 
-# Admin Instance (Project B)  
-ADMIN_DATABASE_URL=postgresql://postgres:[password]@db.[admin-ref].supabase.co:5432/postgres
-
-# Model Gateway (AI)
-AI_BASE_URL=https://modelgateway.insforge.dev/v1
-AI_API_KEY=[your-insforge-anon-key]
+# AI (External APIs)
+GEMINI_API_KEY=[your_gemini_key]
+OPENROUTER_API_KEY=[your_openrouter_key]
 
 # Redis (Upstash)
 REDIS_URL=rediss://default:[password]@[endpoint]:6379

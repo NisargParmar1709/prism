@@ -22,7 +22,13 @@ class Settings(BaseSettings):
     ADMIN_SECRET_KEY: str
     ENABLE_CACHING: bool = False
     
-    # Allow all origins to simplify frontend deployments (auth is still protected by JWT)
-    CORS_ORIGINS: list[str] = ["*"]
+    # CORS Configuration
+    ALLOWED_ORIGINS: str = ""
+
+    @property
+    def allowed_origins(self) -> list[str]:
+        if not self.ALLOWED_ORIGINS:
+            return []
+        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
 
 settings = Settings()

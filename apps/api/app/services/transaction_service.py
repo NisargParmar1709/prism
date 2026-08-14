@@ -40,9 +40,11 @@ async def create_transaction(db: AsyncSession, user_id: UUID, tx_in: Transaction
     db.add(db_tx)
     await db.commit()
     
-    # Recalculate balance for the account (this updates the account on the fly when requested)
-    # The prompt mentions "return with computed balance", but TransactionResponse doesn't have balance.
-    # The API Contract for POST /transactions says it returns the created transaction.
+    # After transaction is created, check budget alerts if it's an expense
+    if tx_in.type == 'expense' and tx_in.status == 'completed':
+        from app.services import notification_service
+        period = tx_in.date.strftime("%Y-%m")
+        await notification_service.check_budget_alerts(db, user_id, tx_in.category_id, period)
     
     return await get_transaction(db, user_id, db_tx.id)
 
@@ -212,6 +214,12 @@ async def update_transaction(db: AsyncSession, user_id: UUID, tx_id: UUID, tx_in
         setattr(tx, field, value)
         
     await db.commit()
+    
+    # After transaction is updated, check budget alerts if it's an expense
+    if tx.type == 'expense' and tx.status == 'completed':
+        from app.services import notification_service
+        period = tx.date.strftime("%Y-%m")
+        await notification_service.check_budget_alerts(db, user_id, tx.category_id, period)
     
     return await get_transaction(db, user_id, tx.id)
 

@@ -47,9 +47,14 @@
 
 Before giving ANY task to AntiGravity, prepend these documents in this exact order:
 
-### 1. PROJECT_CONTEXT_v2.md — The Bible
+### 1. PLAN_OVERRIDES.md — Critical Overrides
+**What it is:** Architectural deviations from the original plan.
+**Why first:** AI must read this to avoid hallucinating the old plan (e.g. Admin routes, PWA).
+**When to update:** Whenever a major architectural shift happens.
+
+### 2. PROJECT_CONTEXT_v2.md — The Bible
 **What it is:** Living project memory. Stack, schema, phasing, feature checklist, known AI bugs.
-**Why first:** The AI must know what exists, what's locked, and what to build next.
+**Why second:** The AI must know what exists, what's locked, and what to build next.
 **When to update:** After every completed feature, change the "Built Features" checklist.
 
 ### 2. INSFORGE_CONSTRAINTS.md — Platform Reality
@@ -109,12 +114,13 @@ Copy-paste this into AntiGravity at the start of EVERY session:
 ```markdown
 ## CONTEXT — READ FIRST (Do NOT skip)
 Read these files in order before doing anything:
-1. /PROJECT_CONTEXT_v2.md
-2. /INSFORGE_CONSTRAINTS.md
-3. /FINANCIAL_SAFETY_RULES.md
-4. /DESIGN_SYSTEM_v2.md
-5. /PAGES_SPEC.md
-6. /API_CONTRACT_v2.md
+1. /PLAN_OVERRIDES.md
+2. /PROJECT_CONTEXT_v2.md
+3. /INSFORGE_CONSTRAINTS.md
+4. /FINANCIAL_SAFETY_RULES.md
+5. /DESIGN_SYSTEM_v2.md
+6. /PAGES_SPEC.md
+7. /API_CONTRACT_v2.md
 
 ## CURRENT SPRINT
 Week: [0 / 1 / 2 / 3 / 4]

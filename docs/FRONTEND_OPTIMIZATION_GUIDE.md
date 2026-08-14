@@ -312,7 +312,8 @@ export function useCreateTransaction() {
 
 ## 5. PWA & Offline-First Strategy
 
-Students in India have intermittent connectivity. The app must work offline.
+> [!CAUTION]
+> **[CANCELLED]** The PWA Offline Queue feature is entirely cancelled based on updated architectural decisions. Do not implement Service Workers or offline syncing. See `docs/PLAN_OVERRIDES.md`.
 
 ### Service Worker Strategy (using `next-pwa`)
 

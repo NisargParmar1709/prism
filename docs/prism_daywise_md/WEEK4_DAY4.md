@@ -1,6 +1,7 @@
-## Day 4: Admin Skeleton
+> [!CAUTION]
+> **[CANCELLED - MOVED TO SEPARATE REPO]** The Admin Dashboard and related endpoints are no longer part of this application. See `docs/PLAN_OVERRIDES.md`.
 
-### Task 4.1: Admin Dashboard Backend
+## Day 4: Admin Skeleton
 
 **AntiGravity Prompt:**
 ```markdown

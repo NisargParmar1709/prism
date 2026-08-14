@@ -1,9 +1,9 @@
 # WEEK4_CHECKLIST_v2.md
-## Prism — Week 4: CSV Export, PWA Offline Queue, Admin Skeleton
+## Prism — Week 4: CSV Export
 
-> **Duration:** 5 days (Days 1–5)
-> **Goal:** User can export data as CSV, use app offline with sync queue, and admin dashboard skeleton exists.
-> **Exit Gate:** CSV export works. Offline transaction queue stores and syncs. Admin /health and /metrics endpoints work.
+> **Duration:** 1 day (Day 1)
+> **Goal:** User can export data as CSV.
+> **Exit Gate:** CSV export works.
 
 ---
 

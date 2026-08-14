@@ -10,7 +10,14 @@ from .config import settings
 db_url = settings.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://") if settings.DATABASE_URL.startswith("postgresql://") else settings.DATABASE_URL
 # asyncpg expects 'ssl' instead of 'sslmode' in the query string
 db_url = db_url.replace("sslmode=", "ssl=")
-engine = create_async_engine(db_url, echo=False)
+engine = create_async_engine(
+    db_url, 
+    echo=False, 
+    pool_pre_ping=True, 
+    pool_recycle=1800,
+    pool_size=10,
+    max_overflow=20
+)
 AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
@@ -102,18 +109,4 @@ async def get_current_user(
             detail={"code": "AUTHENTICATION_ERROR", "message": "Invalid or expired token"}
         )
 
-# 4. Admin Authentication
-async def get_admin_user(credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)]):
-    token = credentials.credentials
-    try:
-        payload = jwt.decode(
-            token,
-            settings.ADMIN_SECRET_KEY,
-            algorithms=["HS256"]
-        )
-        return payload
-    except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"code": "AUTHENTICATION_ERROR", "message": "Invalid or expired admin token"}
-        )
+

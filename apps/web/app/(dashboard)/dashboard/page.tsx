@@ -1,19 +1,20 @@
 'use client';
 
-import { useDashboard } from '@/hooks/use-dashboard';
+import { useDashboard, DashboardData } from '@/hooks/use-dashboard';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { TransactionRow } from '@/components/transactions/TransactionRow';
 import { SavingsGoalsSection } from '@/components/savings/SavingsGoalsSection';
-import { AccountCard } from '@/components/accounts/AccountCard';
 import { PrismButton } from '@/components/ui/PrismButton';
 import Link from 'next/link';
-import { formatCurrency } from '@/lib/utils';
 import { ChevronRight, CreditCard, Landmark, Wallet, ArrowRight, Plus } from 'lucide-react';
 import { BalanceToggle } from '@/components/accounts/BalanceToggle';
 import { useBalanceVisibility } from '@/components/providers/BalanceProvider';
+import { useState } from 'react';
+import { format } from 'date-fns';
 
 export default function DashboardPage() {
-  const { data: dashboard, isLoading, error } = useDashboard();
+  const [period, setPeriod] = useState<string>('');
+  const { data: dashboard, isLoading, error, refetch } = useDashboard(period);
   const { showBalance } = useBalanceVisibility();
 
   if (isLoading) {
@@ -26,23 +27,41 @@ export default function DashboardPage() {
 
   if (error || !dashboard) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-prism-danger">Failed to load dashboard data</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <p className="text-prism-danger">Unable to load dashboard</p>
+        <PrismButton onClick={() => refetch()} variant="outline">
+          Retry
+        </PrismButton>
       </div>
     );
   }
 
   const getAccountIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'bank': return <Landmark className="w-5 h-5 text-prism-info" />;
       case 'wallet': return <Wallet className="w-5 h-5 text-prism-violet-500" />;
       default: return <CreditCard className="w-5 h-5 text-prism-success" />;
     }
   };
 
-  const displayAmount = (amount: string, prefix = '₹') => {
-    return showBalance ? `${prefix}${parseFloat(amount).toLocaleString('en-IN')}` : '****';
+  const displayAmount = (amount: string | number, prefix = '₹') => {
+    const val = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return showBalance ? `${prefix}${val.toLocaleString('en-IN')}` : '****';
   };
+
+  // Determine primary account
+  const primaryAccount = dashboard.accounts.length > 0 ? dashboard.accounts[0] : null;
+
+  // Calculate budget overall percentage
+  const totalBudgeted = parseFloat(dashboard.budget_health.summary.total_budgeted) || 0;
+  const totalSpent = parseFloat(dashboard.budget_health.summary.total_spent) || 0;
+  const budgetPercentage = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0;
+  
+  // Calculate days remaining in current month
+  const today = new Date();
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const daysRemaining = lastDay.getDate() - today.getDate();
+  const dailyAllowance = daysRemaining > 0 ? (totalBudgeted - totalSpent) / daysRemaining : 0;
 
   return (
     <div className="space-y-prism-6 animate-in fade-in duration-500">
@@ -60,10 +79,13 @@ export default function DashboardPage() {
         
         <div className="flex items-center gap-2">
           <BalanceToggle />
-          <select className="h-9 px-3 text-small rounded-lg border border-prism-border bg-prism-white text-prism-text outline-none focus:border-prism-violet-500 transition-colors">
-            <option>This Month</option>
-            <option>Last Month</option>
-            <option>Custom</option>
+          <select 
+            className="h-9 px-3 text-small rounded-lg border border-prism-border bg-prism-white text-prism-text outline-none focus:border-prism-violet-500 transition-colors"
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+          >
+            <option value="">This Month</option>
+            <option value={format(new Date(today.getFullYear(), today.getMonth() - 1, 1), 'yyyy-MM')}>Last Month</option>
           </select>
         </div>
       </div>
@@ -72,34 +94,39 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-prism-5">
         
         {/* Primary Account (DarkHeroCard) */}
-        <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] rounded-card p-prism-5 shadow-[0_8px_24px_rgba(30,41,59,0.3)] text-prism-white relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-prism-violet-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-prism-violet-500/20 transition-colors duration-700"></div>
-          
-          <div className="relative z-10 flex justify-between items-start mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
-                {getAccountIcon(dashboard.primary_account.type)}
-              </div>
-              <div>
-                <h3 className="font-medium text-prism-white/90">{dashboard.primary_account.name}</h3>
-                <p className="text-xs text-prism-white/60 capitalize">
-                  {dashboard.primary_account.type} •••• {dashboard.primary_account.last_4_digits}
-                </p>
+        {primaryAccount ? (
+          <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] rounded-card p-prism-5 shadow-[0_8px_24px_rgba(30,41,59,0.3)] text-prism-white relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-prism-violet-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-prism-violet-500/20 transition-colors duration-700"></div>
+            
+            <div className="relative z-10 flex justify-between items-start mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
+                  {getAccountIcon(primaryAccount.type)}
+                </div>
+                <div>
+                  <h3 className="font-medium text-prism-white/90">{primaryAccount.name}</h3>
+                  <p className="text-xs text-prism-white/60 capitalize">
+                    {primaryAccount.type}
+                  </p>
+                </div>
               </div>
             </div>
             
-            {dashboard.primary_account.card_brand === 'visa' && (
-              <div className="text-xl font-bold italic text-white/50">VISA</div>
-            )}
+            <div className="relative z-10">
+              <p className="text-sm text-prism-white/60 mb-1">Available Balance</p>
+              <p className="text-display font-mono tracking-tight text-white">
+                {displayAmount(primaryAccount.current_balance)}
+              </p>
+            </div>
           </div>
-          
-          <div className="relative z-10">
-            <p className="text-sm text-prism-white/60 mb-1">Available Balance</p>
-            <p className="text-display font-mono tracking-tight text-white">
-              {displayAmount(dashboard.primary_account.balance)}
-            </p>
+        ) : (
+          <div className="bg-gradient-to-br from-[#1E293B] to-[#0F172A] rounded-card p-prism-5 shadow-card text-prism-white flex flex-col items-center justify-center">
+             <p className="text-prism-white/60 mb-4">No accounts linked</p>
+             <Link href="/accounts">
+               <PrismButton variant="outline" className="text-prism-white border-prism-white/20 hover:bg-white/10">Add Account</PrismButton>
+             </Link>
           </div>
-        </div>
+        )}
 
         {/* Budget Health Card */}
         <div className="bg-prism-white border border-prism-border rounded-card p-prism-5 shadow-card flex flex-col justify-between">
@@ -107,16 +134,16 @@ export default function DashboardPage() {
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-h2 font-semibold text-prism-text tracking-tight">Budget Health</h3>
               <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                dashboard.budget_health.percentage >= 100 ? 'bg-prism-danger-bg text-prism-danger-text' : 
-                dashboard.budget_health.percentage >= 80 ? 'bg-prism-warning-bg text-prism-warning-text' : 
+                budgetPercentage >= 100 ? 'bg-prism-danger-bg text-prism-danger-text' : 
+                budgetPercentage >= 80 ? 'bg-prism-warning-bg text-prism-warning-text' : 
                 'bg-prism-success-bg text-prism-success-text'
               }`}>
-                {dashboard.budget_health.percentage}% Used
+                {budgetPercentage.toFixed(1)}% Used
               </span>
             </div>
             
             <p className="text-body text-prism-text-secondary">
-              <span className="font-mono text-prism-text font-medium">{displayAmount(dashboard.budget_health.spent)}</span> spent of <span className="font-mono">{displayAmount(dashboard.budget_health.limit)}</span>
+              <span className="font-mono text-prism-text font-medium">{displayAmount(totalSpent)}</span> spent of <span className="font-mono">{displayAmount(totalBudgeted)}</span>
             </p>
           </div>
           
@@ -124,17 +151,17 @@ export default function DashboardPage() {
             <div className="h-2 w-full bg-prism-surface rounded-full overflow-hidden mb-3">
               <div 
                 className={`h-full rounded-full transition-all duration-1000 ease-out ${
-                  dashboard.budget_health.percentage >= 100 ? 'bg-prism-danger' : 
-                  dashboard.budget_health.percentage >= 80 ? 'bg-prism-warning' : 
+                  budgetPercentage >= 100 ? 'bg-prism-danger' : 
+                  budgetPercentage >= 80 ? 'bg-prism-warning' : 
                   'bg-prism-violet-500'
                 }`}
-                style={{ width: `${Math.min(dashboard.budget_health.percentage, 100)}%` }}
+                style={{ width: `${Math.min(budgetPercentage, 100)}%` }}
               />
             </div>
             
             <div className="flex justify-between items-center text-small text-prism-text-secondary">
-              <span>{dashboard.budget_health.days_remaining} days remaining</span>
-              <span><span className="font-mono">{displayAmount(dashboard.budget_health.daily_allowance)}</span> / day</span>
+              <span>{daysRemaining} days remaining</span>
+              <span><span className="font-mono">{displayAmount(Math.max(0, dailyAllowance))}</span> / day</span>
             </div>
           </div>
         </div>
@@ -146,26 +173,22 @@ export default function DashboardPage() {
         <StatCard 
           label="Total Balance" 
           value={displayAmount(dashboard.stats.total_balance)}
-          change={`₹${parseFloat(dashboard.stats.balance_change).toLocaleString('en-IN')}`}
-          changeType={dashboard.stats.balance_change_type}
+          changeType="neutral"
         />
         <StatCard 
           label="Income This Month" 
           value={displayAmount(dashboard.stats.income_this_month)}
-          change={`₹${parseFloat(dashboard.stats.income_change).toLocaleString('en-IN')}`}
-          changeType="increase"
+          changeType="neutral"
         />
         <StatCard 
           label="Spent This Month" 
           value={displayAmount(dashboard.stats.spent_this_month)}
-          change={`₹${parseFloat(dashboard.stats.spent_change).toLocaleString('en-IN')}`}
-          changeType="increase"
+          changeType="neutral"
           isInverseColors={true}
         />
         <StatCard 
           label="Savings Rate" 
           value={`${dashboard.stats.savings_rate}%`}
-          change={displayAmount(dashboard.stats.savings_amount)}
           changeType="neutral"
         />
       </div>
@@ -186,29 +209,16 @@ export default function DashboardPage() {
             </div>
             
             <div className="px-prism-5">
-              {dashboard.recent_transactions.map((tx) => (
+              {dashboard.recent_transactions.data.map((tx) => (
                 <TransactionRow
                   key={tx.id}
-                  transaction={{
-                    id: tx.id,
-                    account_id: 'mock-account-id',
-                    account_name: tx.account,
-                    account_type: 'bank',
-                    category_id: 'mock-category-id',
-                    category_name: tx.category,
-                    category_icon: tx.category_icon,
-                    type: tx.type as any,
-                    amount: tx.amount,
-                    date: tx.date,
-                    note: tx.description,
-                    tags: [],
-                    status: tx.status as any,
-                    payment_method: tx.payment_method,
-                    created_at: tx.date,
-                  }}
+                  transaction={tx}
                   hideAccount={false}
                 />
               ))}
+              {dashboard.recent_transactions.data.length === 0 && (
+                <p className="text-prism-text-muted text-center py-4">No recent transactions.</p>
+              )}
             </div>
           </div>
           
@@ -243,19 +253,21 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-small font-mono text-prism-text">
-                      {displayAmount(acc.balance)}
-                    </p>
-                    <p className={`text-xs font-medium ${acc.change_type === 'decrease' ? 'text-prism-danger' : acc.change_type === 'increase' ? 'text-prism-success' : 'text-prism-text-muted'}`}>
-                      {acc.change_type === 'decrease' ? '-' : acc.change_type === 'increase' ? '+' : ''}₹{parseFloat(acc.change).toLocaleString('en-IN')}
+                      {displayAmount(acc.current_balance)}
                     </p>
                   </div>
                 </div>
               ))}
+              {dashboard.accounts.length === 0 && (
+                 <p className="text-prism-text-muted text-center py-2 text-sm">No accounts found.</p>
+              )}
             </div>
             
-            <PrismButton variant="outline" className="w-full mt-4" leftIcon={<Plus className="w-4 h-4" />}>
-              Add Account
-            </PrismButton>
+            <Link href="/accounts">
+              <PrismButton variant="outline" className="w-full mt-4" leftIcon={<Plus className="w-4 h-4" />}>
+                Add Account
+              </PrismButton>
+            </Link>
           </div>
           
         </div>

@@ -1,6 +1,7 @@
-## Day 5: Integration & Testing
+> [!CAUTION]
+> **[CANCELLED/MODIFIED]** The Admin endpoints and PWA Offline Sync portions of this integration test are cancelled. See `docs/PLAN_OVERRIDES.md`. Only the CSV Export feature remains.
 
-### Task 5.1: End-to-End Testing
+## Day 5: Integration & Testing
 
 **AntiGravity Prompt:**
 ```markdown

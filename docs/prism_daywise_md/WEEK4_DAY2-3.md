@@ -1,7 +1,7 @@
+> [!CAUTION]
+> **[CANCELLED]** The PWA Offline Queue feature is entirely cancelled based on updated architectural decisions. Do not implement Service Workers or offline syncing. See `docs/PLAN_OVERRIDES.md`.
+
 Day 2-3: PWA Offline Queue
-Task 2.1: Service Worker & Offline Queue
-AntiGravity Prompt:
-markdown
 ## CONTEXT
 Read /FRONTEND_OPTIMIZATION_GUIDE.md Section 5 (PWA & Offline-First).
 

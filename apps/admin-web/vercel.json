@@ -1,0 +1,23 @@
+{
+  "regions": ["sfo1"],
+  "headers": [
+    {
+      "source": "/(.*)\\.(js|css|webp|png|jpg|jpeg|svg|woff2|woff)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=0, stale-while-revalidate=0"
+        }
+      ]
+    }
+  ]
+}
