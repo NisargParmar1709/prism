@@ -94,3 +94,11 @@ async def archive_account(db: AsyncSession, user_id: UUID, account_id: UUID):
         
     account.is_archived = True
     await db.commit()
+
+async def unarchive_account(db: AsyncSession, user_id: UUID, account_id: UUID):
+    account = await db.get(Account, account_id)
+    if not account or account.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
+        
+    account.is_archived = False
+    await db.commit()

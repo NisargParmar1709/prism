@@ -67,6 +67,19 @@ export function useArchiveAccount() {
   });
 }
 
+export function useRestoreAccount() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.patch(`/accounts/${id}/restore`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    },
+  });
+}
+
 export function useAccount(id: string) {
   return useQuery({
     queryKey: ['accounts', id],

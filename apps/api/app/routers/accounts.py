@@ -50,3 +50,11 @@ async def archive_account(
     user_id: UUID = Depends(get_current_user)
 ):
     await account_service.archive_account(db, user_id, account_id)
+
+@router.patch("/{account_id}/restore", status_code=status.HTTP_204_NO_CONTENT)
+async def restore_account(
+    account_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    user_id: UUID = Depends(get_current_user)
+):
+    await account_service.unarchive_account(db, user_id, account_id)

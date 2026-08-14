@@ -24,6 +24,7 @@ import { useTransactions } from '@/hooks/use-transactions';
 import { TransactionRow } from '@/components/transactions/TransactionRow';
 import { AccountEditModal } from '@/components/accounts/AccountEditModal';
 import { ArchiveConfirmModal } from '@/components/accounts/ArchiveConfirmModal';
+import { RestoreConfirmModal } from '@/components/accounts/RestoreConfirmModal';
 
 const TYPE_ICONS: Record<AccountType, React.ElementType> = {
   cash: CircleDollarSign,
@@ -52,6 +53,7 @@ export default function AccountDetailPage({
   const { showBalance } = useBalanceVisibility();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
   const [period, setPeriod] = useState<'today' | 'week' | 'month' | 'custom'>('month');
 
   // Fetch account data
@@ -107,11 +109,18 @@ export default function AccountDetailPage({
         {/* Account Hero */}
         <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-prism-violet-50 text-prism-violet-700">
+            <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${account.is_archived ? 'bg-prism-surface text-prism-text-muted' : 'bg-prism-violet-50 text-prism-violet-700'}`}>
               <Icon size={32} />
             </div>
             <div>
-              <h1 className="text-h1 font-bold text-prism-text">{account.name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-h1 font-bold text-prism-text">{account.name}</h1>
+                {account.is_archived && (
+                  <span className="inline-flex items-center rounded-full bg-prism-surface px-2.5 py-0.5 text-xs font-medium text-prism-text-muted border border-prism-border">
+                    Archived
+                  </span>
+                )}
+              </div>
               <p className="text-small text-prism-text-muted mt-1">
                 {TYPE_LABELS[account.type]} {maskedId && <span className="ml-1 opacity-75">{maskedId}</span>}
               </p>
@@ -136,15 +145,27 @@ export default function AccountDetailPage({
                 <Edit2 size={16} className="mr-2" />
                 Edit
               </PrismButton>
-              <PrismButton 
-                variant="text" 
-                size="compact" 
-                className="flex-1 sm:flex-none text-prism-danger hover:bg-prism-danger-light"
-                onClick={() => setIsArchiveModalOpen(true)}
-              >
-                <Archive size={16} className="mr-2" />
-                Archive
-              </PrismButton>
+              {account.is_archived ? (
+                <PrismButton 
+                  variant="primary" 
+                  size="compact" 
+                  className="flex-1 sm:flex-none"
+                  onClick={() => setIsRestoreModalOpen(true)}
+                >
+                  <ArrowUpFromLine size={16} className="mr-2" />
+                  Restore
+                </PrismButton>
+              ) : (
+                <PrismButton 
+                  variant="text" 
+                  size="compact" 
+                  className="flex-1 sm:flex-none text-prism-danger hover:bg-prism-danger-light"
+                  onClick={() => setIsArchiveModalOpen(true)}
+                >
+                  <Archive size={16} className="mr-2" />
+                  Archive
+                </PrismButton>
+              )}
             </div>
           </div>
         </section>
@@ -250,6 +271,12 @@ export default function AccountDetailPage({
       <ArchiveConfirmModal 
         isOpen={isArchiveModalOpen} 
         onClose={() => setIsArchiveModalOpen(false)} 
+        account={account} 
+      />
+
+      <RestoreConfirmModal 
+        isOpen={isRestoreModalOpen} 
+        onClose={() => setIsRestoreModalOpen(false)} 
         account={account} 
       />
     </div>
